@@ -107,7 +107,7 @@
 
 
         function postData(){
-            console.log("insubmit");
+            document.getElementById('submit').innerHTML="<div class=\"spinner-border text-dark\" role=\"status\"></div>"
             let formData=new FormData();
             formData.append("data", JSON.stringify(userData));
         
@@ -124,6 +124,8 @@
             
             })
             .then((data)=>{
+                document.getElementById('submit').innerHTML="Submit"
+
                 if(data.status==200){
                     window.location.href='/login';
                 }
@@ -144,6 +146,8 @@
                 // }
             })
             .catch((res)=>{
+                document.getElementById('submit').innerHTML="Submit"
+
                 alert(res);
             });
         }

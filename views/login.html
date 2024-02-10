@@ -71,7 +71,8 @@
 
 
         function postData(){
-        
+            document.getElementById('submit').innerHTML="<div class=\"spinner-border text-dark\" role=\"status\"></div>"
+            
         
             let request=fetch("/api/user/login", {
                 method: "POST",
@@ -81,7 +82,7 @@
                 body: JSON.stringify(userData) ,
             
             }).then((res)=>{
-                console.log(res);
+                document.getElementById('submit').innerHTML="Login";
                 if(res.status==200){
                     window.location.href = '/'
                 }
@@ -93,6 +94,7 @@
                 }
             })
             .catch((res)=>{
+                document.getElementById('submit').innerHTML="Login";
                 alert("error");
             });
         }
