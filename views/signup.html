@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  </head>
+  <body>
+      <header class="p-3 text-bg-dark">
+        <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+              <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+            </a>
+    
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+              <li><a href="/" class="nav-link px-2 text-secondary">Home</a></li>
+            </ul>
+    
+        
+    
+            <div class="text-end">
+              <a href="/login"><button type="button" class="btn btn-outline-light me-2">Login</button></a>
+              <a href="/signup"><button type="button" class="btn btn-warning">Sign-up</button></a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div
+        class="container d-flex align-items-center justify-content-center"
+      >
+        <div class="card col-12 mt-5" style="max-width:600px; ">
+            <div class="card-header">Signin</div>
+            <div class="card-body">
+                <form class="form-floating">
+                    <div class="form-floating mb-3">
+                      <input type="text" class="form-control" id="firstName" placeholder="first name" oninput="setData('firstName', this.value)">
+                      <label for="firstName">First Name</label>
+                    </div> 
+                    <div class="form-floating mb-3">
+                      <input type="text" class="form-control" id="lastName" placeholder="last name" oninput="setData('lastName', this.value)">
+                      <label for="lastName">Last Name</label>
+                    </div> 
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="email" placeholder="name@example.com" oninput="setData('email', this.value)">
+                        <label for="email">Email Address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="mobileNumber" placeholder="xxxxxxxxxx" oninput="setData('mobileNumber', this.value)">
+                        <label for="email">Mobile Number</label>
+                    </div>
+                    <div class="mb-3">
+                        <img id="imgDisp" width="130" height="130" alt="" style="display: none;object-fit: cover;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">select a profile picture</label>
+                        <input class="form-control" type="file" accept="image/*" id="profilePic" onchange="showImg(this)">
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password" placeholder="password" oninput="setData('password', this.value)">
+                        <label for="email">Password</label>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button
+                            type="button"
+                            id="submit"
+                            onclick="postData()"
+                            class="btn btn-primary">submit</button>
+                    
+                </form>
+            </div>
+        </div>
+        
+      </div>
+      
+
+      <script>
+
+        var userData={};
+        function setData(key, value){
+            userData[key]=value;
+        }
+
+
+   
+            
+            function showImg(e) {
+                const file = e.files[0];
+    
+
+                if (file) {
+                    const reader = new FileReader();
+                        reader.onload = function(e) {
+                        const imageUrl = e.target.result;
+                        const imgElement = document.getElementById('imgDisp');
+                        imgElement.src = imageUrl;
+                        imgElement.style.display='block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+                    
+            }
+
+
+
+
+        function postData(){
+            console.log("insubmit");
+            let formData=new FormData();
+            formData.append("data", JSON.stringify(userData));
+        
+            let fileInput = document.getElementById('profilePic');
+            let file = fileInput.files[0]; 
+            formData.append("avatar", file);
+        
+            console.log(formData);
+        
+            let request=fetch("/api/user", {
+                method: "POST",
+                // credentials: 'include',
+                body: formData ,
+            
+            })
+            .then((data)=>{
+                if(data.status==200){
+                    window.location.href='/login';
+                }
+                return data.text()
+            })
+            .then((res)=>{
+                alert(res);
+            
+                // if(res.status==200){
+                //     alert("signup success");
+                //     window.location.href = '/login'
+                // }
+                // else if(res.status==400){
+                //     alert("signup failed (invalid data)");
+                // }
+                // else if(res.status==409){
+                //     alert("signup failed (email already exist)");
+                // }
+            })
+            .catch((res)=>{
+                alert(res);
+            });
+        }
+
+      </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+  </body>
+</html>

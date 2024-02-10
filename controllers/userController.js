@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
 const User=require('../models/user');
 const { json } = require('express');
 
@@ -14,7 +15,7 @@ module.exports.create=async function(req, res){
         return
     }
 
-    if(req?.file===undefined && req.file.mimetype.startsWith("image")){
+    if(req?.file===undefined && req?.file?.mimetype?.startsWith("image")===undefined){
         res.status(400).send("profile picture error");
         return;
     }
@@ -24,12 +25,40 @@ module.exports.create=async function(req, res){
     try{
         await user.save();
     }catch(e){
-        res.status(400).send("invalid data");
+        console.log(e);
+        res.status(400).send(e.message);
         return;
     }
     res.status(200).send("user added successfully");
 }
 
 module.exports.login=async function(req, res){
+    let user=await User.findOne({email:req.body?.email});
 
+    if(user){
+      if(bcrypt.compareSync(req.body?.password, user.password)){
+        let token = jwt.sign({ id:user._id}, process.env.JWT_KEY);
+        res.cookie("auth", token);
+        res.status(200).send("loging success");
+      }
+      else{
+        res.status(401).send("incorrect password or username");
+      }
+    }
+    else{
+      res.status(404).send("user not found");
+    }
+  
+}
+
+module.exports.get=async function(req, res){
+
+    if(req.isAuthorized){
+        let user=await User.findById(req.userID, {firstName:true, lastName:true, profilePic:true, email:true, mobileNumber:true});
+        res.status(200).json(user);
+    }
+    else{
+        res.status(401).send("not authorized");
+    }
+  
 }
