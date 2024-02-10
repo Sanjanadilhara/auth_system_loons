@@ -35,6 +35,7 @@ app.use(function(req, res, next){
         next();
       }
     });
+    
   });
 app.use('/api/user/', userRoutes);
 app.use('/', viewRoutes);
